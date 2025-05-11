@@ -1,0 +1,81 @@
+import customtkinter as ctk
+
+# Configure appearance
+ctk.set_appearance_mode("Light")     # Options: "System" | "Dark" | "Light"
+ctk.set_default_color_theme("green") # Themes: "blue" | "green" | "dark-blue"
+
+# App class
+class CalculatorApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+
+        self.title("CTk Calculator")
+        self.geometry("350x490")
+        self.resizable(False, False)
+
+        self.expression = ""
+
+        # Display Entry
+        self.display = ctk.CTkEntry(self, width=310, height=60, font=("Roboto", 28), justify="right")
+        self.display.insert(0, "0")
+        self.display.pack(pady=20, padx=15)
+
+        # Buttons Frame
+        self.button_frame = ctk.CTkFrame(self)
+        self.button_frame.pack(pady=10)
+
+        # Button Layout
+        buttons = [
+            ("C", "⌫", "%", "/"),
+            ("7", "8", "9", "*"),
+            ("4", "5", "6", "-"),
+            ("1", "2", "3", "+"),
+            ("00", "0", ".", "=")
+        ]
+
+        for row in buttons:
+            row_frame = ctk.CTkFrame(self.button_frame)
+            row_frame.pack(pady=5)
+            for btn_text in row:
+                self._create_button(row_frame, btn_text)
+
+    def _create_button(self, frame, text):
+        button = ctk.CTkButton(
+            frame,
+            text=text,
+            width=70,
+            height=60,
+            corner_radius=10,
+            font=("Roboto", 20),
+            command=lambda: self._on_button_click(text)
+        )
+        button.pack(side="left", padx=5)
+
+    def _on_button_click(self, char):
+        if char == "C":
+            self.expression = ""
+            self.display.delete(0, ctk.END)
+            self.display.insert(0, "0")
+        elif char == "⌫":
+            self.expression = self.expression[:-1]
+            self.display.delete(0, ctk.END)
+            self.display.insert(0, self.expression if self.expression else "0")
+        elif char == "=":
+            try:
+                result = str(eval(self.expression))
+                self.display.delete(0, ctk.END)
+                self.display.insert(0, result)
+                self.expression = result
+            except:
+                self.display.delete(0, ctk.END)
+                self.display.insert(0, "Error")
+                self.expression = ""
+        else:
+            self.expression += char
+            self.display.delete(0, ctk.END)
+            self.display.insert(0, self.expression)
+
+# Run the app
+if __name__ == "__main__":
+    app = CalculatorApp()
+    app.mainloop()
