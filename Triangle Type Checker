@@ -1,0 +1,94 @@
+import customtkinter as ctk
+import tkinter as tk
+
+# Set appearance
+ctk.set_appearance_mode("System")  # Can be "Dark" or "Light"
+ctk.set_default_color_theme("blue")
+
+# Create App
+app = ctk.CTk()
+app.title("Triangle Type Checker")
+app.geometry("500x600")
+
+# Function to check triangle type
+def check_triangle():
+    canvas.delete("all")
+    try:
+        a = int(entry1.get())
+        b = int(entry2.get())
+        c = int(entry3.get())
+
+        if a <= 0 or b <= 0 or c <= 0:
+            result_label.configure(text="Angles must be positive.")
+            return
+
+        if a + b + c == 180:
+            if a == b == c:
+                result = "It is an Equilateral Triangle"
+            elif a != b and b != c and a != c:
+                result = "It is a Scalene Triangle"
+            else:
+                result = "It is an Isosceles Triangle"
+
+            result_label.configure(text=result)
+            draw_triangle(a, b, c)
+        else:
+            result_label.configure(text="Sum of angles is not 180°. Invalid triangle.")
+    except ValueError:
+        result_label.configure(text="Please enter valid integers.")
+
+# Function to draw triangle (symbolic)
+def draw_triangle(a, b, c):
+    x1, y1 = 100, 250
+    x2, y2 = 300, 250
+    x3, y3 = 200, 100
+
+    canvas.create_polygon(x1, y1, x2, y2, x3, y3, fill="lightblue", outline="black")
+    canvas.create_text((x1+x2)//2, y1+20, text=f"{c}°", font=("Arial", 10))
+    canvas.create_text((x1+x3)//2 - 10, (y1+y3)//2, text=f"{a}°", font=("Arial", 10))
+    canvas.create_text((x2+x3)//2 + 10, (y2+y3)//2, text=f"{b}°", font=("Arial", 10))
+
+# Function to clear all fields
+def clear_fields():
+    entry1.delete(0, ctk.END)
+    entry2.delete(0, ctk.END)
+    entry3.delete(0, ctk.END)
+    result_label.configure(text="")
+    canvas.delete("all")
+
+# Function to toggle theme
+def toggle_theme():
+    current = ctk.get_appearance_mode()
+    if current == "Light":
+        ctk.set_appearance_mode("Dark")
+    else:
+        ctk.set_appearance_mode("Light")
+
+# UI Elements
+title_label = ctk.CTkLabel(app, text="Triangle Type Checker", font=ctk.CTkFont(size=22, weight="bold"))
+title_label.pack(pady=15)
+
+entry1 = ctk.CTkEntry(app, placeholder_text="Enter first angle",width=150,height=30)
+entry1.pack(pady=5)
+entry2 = ctk.CTkEntry(app, placeholder_text="Enter second angle",width=150,height=30)
+entry2.pack(pady=5)
+entry3 = ctk.CTkEntry(app, placeholder_text="Enter third angle",width=150,height=30)
+entry3.pack(pady=5)
+
+check_btn = ctk.CTkButton(app, text="Check Triangle", command=check_triangle)
+check_btn.pack(pady=10)
+
+clear_btn = ctk.CTkButton(app, text="Clear", command=clear_fields, fg_color="gray")
+clear_btn.pack(pady=5)
+
+theme_btn = ctk.CTkButton(app, text="Toggle Theme", command=toggle_theme)
+theme_btn.pack(pady=5)
+
+result_label = ctk.CTkLabel(app, text="", font=ctk.CTkFont(size=16))
+result_label.pack(pady=10)
+
+canvas = tk.Canvas(app, width=400, height=250, bg="white")
+canvas.pack(pady=10)
+
+# Run the app
+app.mainloop()
